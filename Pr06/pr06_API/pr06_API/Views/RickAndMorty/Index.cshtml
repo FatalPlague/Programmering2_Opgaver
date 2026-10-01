@@ -1,0 +1,20 @@
+﻿@model Character
+
+<h2>Get one charachter by id</h2>
+<form method="get" asp-controller="RickAndMorty" asp-action="Character">
+    <div>
+        <label asp-for="Id">ID</label>
+        <input type="number" asp-for="Id" />
+        <span asp-validation-for="Id"></span>
+    </div>
+    <div>
+        <button class="btn btn-primary" type="submit">Find character</button>
+    </div>
+    
+</form>
+
+<br />
+
+<h2>Wanna get all characters?</h2>
+<a class="btn btn-primary" asp-controller="RickAndMorty" asp-action="AllCharacters">Get all characters</a>
+@* <button asp-controller="RickAndMorty" asp-action="AllCharacters">Get all characters</button> *@

@@ -1,0 +1,47 @@
+﻿@model AllCharactersViewModel
+
+<div class="container">
+    @if (Model.CharacterResponse == null)
+    {
+        <h1>@Model.ErrorMessage</h1>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+            @foreach (Character character in Model.CharacterResponse.Characters)
+            {
+                <div class="col">
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-md-6">
+                                <img src="@character.Image" class="img-fluid rounded-start " alt="...">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card-body">
+                                    <h5 class="card-title">@character.Name</h5>
+                                    <p class="card-text">
+                                        <span>ID: </span>
+                                        <span>@character.Id</span>
+                                    </p>
+                                    <p class="card-text">
+                                        <span>Status: </span>
+                                        <span>@character.Status</span>
+                                    </p>
+                                    <p class="card-text">
+                                        <span>Species: </span>
+                                        <span>@character.Species</span>
+                                    </p>
+                                    <p class="card-text">
+                                        <span>Type: </span>
+                                        <span>@character.Type</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+

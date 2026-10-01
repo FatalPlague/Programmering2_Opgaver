@@ -1,0 +1,66 @@
+﻿@model MovieViewModel
+
+@{
+    string action = ViewBag.Action;
+
+}
+
+<form method="post" asp-controller="movies" asp-action=@action>
+    <div class="text-danger" asp-validation-summary="All"></div>
+    @if (action == "edit")
+        {
+            <label class="form-label" asp-for="Movie.MovieId">Movie id</label>
+            <input class="form-control" type="text" asp-for="Movie.MovieId" />
+        }
+    <input class="form-control" type="hidden" asp-for="Movie.MovieId" />
+
+    <div class="mb-3">
+        <label class="form-label" asp-for="Movie.Title">Title</label>
+        <input class="form-control" type="text" asp-for="Movie.Title">
+        <span class="text-danger" asp-validation-for="Movie.Title"></span>
+
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Movie.ReleaseYear"> Release year</label>
+        <input class="form-control" type="number" asp-for="Movie.ReleaseYear">
+        <span class="text-danger" asp-validation-for="Movie.ReleaseYear"></span>
+
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Movie.DurationInMinutes">Duration in minutes</label>
+        <input class="form-control" type="number" asp-for="Movie.DurationInMinutes">
+        <span class="text-danger" asp-validation-for="Movie.DurationInMinutes"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Movie.Description">Description</label>
+        <input class="form-control" type="text" asp-for="Movie.Description">
+        <span class="text-danger" asp-validation-for="Movie.Description"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Movie.Rating">Rating 1-10</label>
+        <input class="form-control" type="number" asp-for="Movie.Rating">
+        <span class="text-danger" asp-validation-for="Movie.Rating"></span>
+    </div>
+    <div class="mb-3">
+        @* <input class="form-control" type="hidden" asp-for="Movie.DirectorId" />
+        <input class="form-control" type="hidden" asp-for="Movie.Director" /> *@
+        <label class="form-label" asp-for="Movie.DirectorId">Choose director</label>
+        <select class="form-select" asp-for="Movie.DirectorId">
+            @* <option value="1">Christopher Nolan</option>
+            <option value="2">Lana Wachowski</option>
+            <option value="3">Jon Favreau</option>
+            <option value="4">John Lasseter</option>
+            <option value="5">Andrew Stanton</option>
+            <option value="6">Tommy Wiseau</option>
+            <option value="7">DEnis Villeneuve</option> *@
+            @foreach (Director director in Model.Directors)
+            {
+                <option value="@director.DirectorId">@director.Fullname</option>
+            }
+        </select>
+        <span class="text-danger" asp-validation-for="Movie.DirectorId"></span>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a class="btn btn-danger" asp-controller="movies" asp-action="index">Cancel</a>
+</form>

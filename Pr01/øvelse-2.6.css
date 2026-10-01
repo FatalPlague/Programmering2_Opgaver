@@ -1,0 +1,26 @@
+#link {
+        color: rgb(0,113,133);
+    }
+#pris {
+        color: rgb(0,118,0);
+        font-weight: bold;
+    }
+
+.btn {
+        width: 100px;
+        height: 30px;
+        border-radius: 25px;
+        border: 0;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+.add {
+        background-color: rgb(255,216,20);
+    }
+.buy {
+        background-color: rgb(255,164,28);
+    }
+#header {
+        font-size:x-large;
+        font-weight: bold;
+    }

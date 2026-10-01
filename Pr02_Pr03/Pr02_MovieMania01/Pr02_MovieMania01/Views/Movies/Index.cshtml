@@ -1,0 +1,39 @@
+﻿@model List<Movie>
+
+@section Title {
+    <div class=" d-flex justify-content-between align-items-center mb-2">
+        <h1>Movies</h1>
+        <a class="btn btn-primary" asp-controller="movies" asp-action="add">+ Add Movie</a>
+    </div>
+    
+}
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3 pb-5">
+    @foreach (Movie movie in Model)
+    {
+        <div class="col">
+            <div class="card" style="height: 225px;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@movie.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">@movie.ReleaseYear | @movie.DurationInMinutes min | &#9733; @movie.Rating</h6>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">Directed by @movie.Director?.Fullname</h6>
+                    <p class="card-text">@movie.Description</p>
+                    <div class="mt-auto">
+                        <a class="btn btn-primary" asp-controller="movies" asp-action="edit" asp-route-id="@movie.MovieId">Edit</a>
+                        <a class="btn btn-danger" asp-controller="movies" asp-action="delete" asp-route-id="@movie.MovieId" onclick="return confirmDelete('@movie.Title')">Delete</a>
+                    </div>
+                
+                </div>
+            </div>
+            
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(movieTitle){
+            return confirm(`Are you sure you want to delete the movie: ${movieTitle}?`);
+        }
+    </script>
+}

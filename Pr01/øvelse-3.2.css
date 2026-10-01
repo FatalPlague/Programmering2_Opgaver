@@ -1,0 +1,26 @@
+div {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#currentPrice{
+    font-size: xx-large;
+    font-weight: bold;
+    padding-right: 10px;
+}
+
+
+#green{
+    color: rgb(7,213,7);
+}
+.grey{
+    color: gray;
+    font-weight: bold;
+}
+
+#red{
+    color: red;
+}
+
+p{
+    margin-bottom: -10px;
+}
