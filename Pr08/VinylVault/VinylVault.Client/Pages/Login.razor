@@ -1,0 +1,130 @@
+@page "/login"
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+@inject AuthState AuthState
+@inject NavigationManager NavManager
+
+<PageTitle>VinylVault – Log ind</PageTitle>
+
+<section class="auth-section container py-5">
+    <div class="auth-card mx-auto shadow-sm">
+        <div class="text-center mb-4">
+            <img src="/vv_logo.png" alt="Vinyl Vault logo" class="auth-logo mb-3" />
+            <h2 class="display-6 fw-bold mb-1">Log ind</h2>
+            <p class="text-secondary mb-0">Velkommen tilbage til din samling.</p>
+        </div>
+
+        @if (AuthState.IsLoggedIn)
+        {
+            <div class="alert alert-success text-center">
+                Du er logget ind som <strong>@AuthState.Email</strong>.
+            </div>
+
+            <button class="btn btn-outline-secondary btn-lg w-100 shadow" @onclick="Logout">
+                Log ud
+            </button>
+        }
+        else
+        {
+            <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <InputText id="email" type="email" class="form-control" placeholder="navn@eksempel.dk" @bind-Value="loginModel.Email" />
+                    <ValidationMessage For="@(() => loginModel.Email)" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Adgangskode</label>
+                    <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+                    <ValidationMessage For="@(() => loginModel.Password)" />
+                </div>
+
+                <button type="submit" class="btn vv-primary btn-lg w-100 mt-2 shadow" disabled="@isBusy">
+                    @if (isBusy)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    }
+                    Log ind
+                </button>
+
+                @if (errorMessage is not null)
+                {
+                    <div class="alert alert-danger mt-4 mb-0">@errorMessage</div>
+                }
+            </EditForm>
+
+            <p class="text-center text-secondary mt-4 mb-0">
+                Har du ikke en konto? <NavLink href="register">Opret dig her</NavLink>
+            </p>
+        }
+    </div>
+</section>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? errorMessage;
+    private bool isBusy;
+
+    private async Task HandleLogin()
+    {
+        isBusy = true;
+        errorMessage = null;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("https://localhost:7142/login", loginModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var token = await response.Content.ReadFromJsonAsync<AccessTokenResponse>();
+
+                if (string.IsNullOrEmpty(token?.AccessToken))
+                {
+                    errorMessage = "API'et svarede, men returnerede intet access token.";
+                    return;
+                }
+
+                AuthState.SignIn(loginModel.Email, token.AccessToken);
+                NavManager.NavigateTo("/golden");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                errorMessage = "Forkert e-mail eller adgangskode.";
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                errorMessage = "API'et har intet /login endpoint (404).";
+            }
+            else
+            {
+                errorMessage = $"Login fejlede ({(int)response.StatusCode} {response.ReasonPhrase}).";
+            }
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Kunne ikke forbinde til API’et.";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    private void Logout()
+    {
+        AuthState.SignOut();
+        loginModel = new();
+    }
+
+    private class LoginModel
+    {
+        [Required(ErrorMessage = "E-mail skal udfyldes.")]
+        [EmailAddress(ErrorMessage = "Ugyldig e-mailadresse.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Adgangskode skal udfyldes.")]
+        public string Password { get; set; } = string.Empty;
+    }
+}

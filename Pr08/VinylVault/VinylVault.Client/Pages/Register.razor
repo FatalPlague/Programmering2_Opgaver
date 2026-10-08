@@ -1,0 +1,156 @@
+@page "/register"
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<PageTitle>VinylVault – Opret konto</PageTitle>
+
+<section class="auth-section container py-5">
+    <div class="auth-card mx-auto shadow-sm">
+        <div class="text-center mb-4">
+            <img src="/vv_logo.png" alt="Vinyl Vault logo" class="auth-logo mb-3" />
+            <h2 class="display-6 fw-bold mb-1">Opret konto</h2>
+            <p class="text-secondary mb-0">Kom i gang med at bygge din vinylsamling.</p>
+        </div>
+
+        <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <InputText id="email" type="email" class="form-control" placeholder="navn@eksempel.dk" @bind-Value="registerModel.Email" />
+                <ValidationMessage For="@(() => registerModel.Email)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Adgangskode</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="registerModel.Password" />
+                <ValidationMessage For="@(() => registerModel.Password)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Gentag adgangskode</label>
+                <InputText id="confirmPassword" type="password" class="form-control" @bind-Value="registerModel.ConfirmPassword" />
+                <ValidationMessage For="@(() => registerModel.ConfirmPassword)" />
+            </div>
+
+            <button type="submit" class="btn vv-primary btn-lg w-100 mt-2 shadow" disabled="@isBusy">
+                @if (isBusy)
+                {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                }
+                Opret konto
+            </button>
+
+            @if (successMessage is not null)
+            {
+                <div class="alert alert-success mt-4 mb-0">@successMessage</div>
+            }
+
+            @if (errorMessage is not null)
+            {
+                <div class="alert alert-danger mt-4 mb-0">
+                    @errorMessage
+                    @if (apiErrors.Count > 0)
+                    {
+                        <ul class="mb-0 mt-2">
+                            @foreach (var error in apiErrors)
+                            {
+                                <li>@error</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+        </EditForm>
+
+        <p class="text-center text-secondary mt-4 mb-0">
+            Har du allerede en konto? <NavLink href="login">Log ind her</NavLink>
+        </p>
+    </div>
+</section>
+
+@code {
+    private RegisterModel registerModel = new();
+    private string? successMessage;
+    private string? errorMessage;
+    private List<string> apiErrors = new();
+    private bool isBusy;
+
+    private async Task HandleRegister()
+    {
+        isBusy = true;
+        successMessage = null;
+        errorMessage = null;
+        apiErrors.Clear();
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("https://localhost:7142/register", new
+            {
+                registerModel.Email,
+                registerModel.Password
+            });
+
+            if (response.IsSuccessStatusCode)
+            {
+                successMessage = "Kontoen blev oprettet! Du sendes videre til login…";
+                registerModel = new();
+
+                StateHasChanged();
+                await Task.Delay(1500);
+                NavManager.NavigateTo("/login");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                errorMessage = "Kontoen kunne ikke oprettes:";
+                await ReadApiErrors(response);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                errorMessage = "API'et har intet /register endpoint (404).";
+            }
+            else
+            {
+                errorMessage = $"Registrering fejlede ({(int)response.StatusCode} {response.ReasonPhrase}).";
+            }
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Kunne ikke forbinde til API’et.";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    // Identity API'et returnerer valideringsfejl (fx krav til adgangskoden) som ValidationProblem.
+    private async Task ReadApiErrors(HttpResponseMessage response)
+    {
+        try
+        {
+            var problem = await response.Content.ReadFromJsonAsync<IdentityProblemResponse>();
+            if (problem?.Errors is not null)
+                apiErrors.AddRange(problem.Errors.Values.SelectMany(e => e));
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            // Svaret var ikke JSON – vis blot den generelle fejlbesked.
+        }
+    }
+
+    private class RegisterModel
+    {
+        [Required(ErrorMessage = "E-mail skal udfyldes.")]
+        [EmailAddress(ErrorMessage = "Ugyldig e-mailadresse.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Adgangskode skal udfyldes.")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Gentag din adgangskode.")]
+        [Compare(nameof(Password), ErrorMessage = "Adgangskoderne er ikke ens.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}

@@ -1,0 +1,97 @@
+@page "/golden"
+@inject HttpClient Http
+@inject AuthState AuthState
+
+<PageTitle>VinylVault – Gyldne plader</PageTitle>
+
+<section class="golden-section container py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-6 fw-bold golden-title mb-2">Gyldne plader</h2>
+        <p class="golden-subtitle mb-0">Et udvalg af klassikere – kun for medlemmer.</p>
+    </div>
+
+    @if (!AuthState.IsLoggedIn || unauthorizedError)
+    {
+        <div class="alert alert-danger text-center mx-auto" style="max-width:600px;">
+            <strong>Adgang nægtet:</strong> Du skal være logget ind for at se de gyldne plader.
+            <div class="mt-3">
+                <NavLink class="btn vv-primary shadow" href="login">Log ind</NavLink>
+            </div>
+        </div>
+    }
+    else if (isLoading)
+    {
+        <div class="text-center py-5 golden-subtitle">
+            <div class="spinner-border text-warning" role="status"></div>
+            <p class="mt-3"><em>Indlæser gyldne plader…</em></p>
+        </div>
+    }
+    else if (genericError)
+    {
+        <div class="alert alert-danger text-center mx-auto" style="max-width:600px;">
+            <strong>Fejl:</strong> Kunne ikke hente de gyldne plader fra API’et.
+        </div>
+    }
+    else if (records is null || records.Count == 0)
+    {
+        <div class="text-center py-5 golden-subtitle">
+            <p class="mt-3">Der er endnu ingen gyldne plader.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4 justify-content-center">
+            @foreach (var r in records)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="golden-card h-100 text-center p-4">
+                        <div class="golden-vinyl mx-auto mb-4"></div>
+                        <h5 class="golden-album mb-1">@r.Album</h5>
+                        <p class="golden-artist mb-3">@r.Artist</p>
+                        <span class="golden-badge">@r.Year</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    private List<RecordReadDto>? records;
+    private bool isLoading = true;
+    private bool unauthorizedError = false;
+    private bool genericError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthState.IsLoggedIn)
+            return;
+
+        try
+        {
+            var response = await Http.GetAsync("https://localhost:7142/api/records/golden");
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                unauthorizedError = true;
+                return;
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                genericError = true;
+                return;
+            }
+
+            records = await response.Content.ReadFromJsonAsync<List<RecordReadDto>>();
+        }
+        catch (HttpRequestException)
+        {
+            genericError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

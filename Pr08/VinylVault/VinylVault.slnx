@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="VinylVault.Api/VinylVault.Api.csproj" />
+  <Project Path="VinylVault.Client/VinylVault.Client.csproj">
+    <BuildDependency Project="VinylVault.Api/VinylVault.Api.csproj" />
+  </Project>
+  <Project Path="VinylVault.Shared/VinylVault.Shared.csproj" />
+</Solution>
