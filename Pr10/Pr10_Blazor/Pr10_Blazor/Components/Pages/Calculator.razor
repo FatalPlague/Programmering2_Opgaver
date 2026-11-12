@@ -1,0 +1,58 @@
+﻿@rendermode InteractiveServer
+
+<h3>Calculator</h3>
+<span>
+    <label class="text-primary">input 1: </label>
+    <input class="text-primary" type="number" step=".01" @bind="input1"/>
+</span>
+<br />
+<span>
+    <label class="text-primary">input 2: </label>
+    <input class="text-primary" type="number" step=".01" @bind="input2" />
+</span>
+<p>Result: @result</p>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary" @onclick="add">+</button>
+        </div>
+        <div class="col-sm">
+            <button class="btn btn-primary" @onclick="sub">-</button>
+        </div>
+        <div class="col">
+            <button class="btn btn-primary" @onclick="multiply">*</button>
+        </div>
+        <div class="col">
+            <button class="btn btn-primary" @onclick="divide">/</button>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+@code {
+    private double input1 = 0;
+    private double input2 = 0;
+    private double result = 0;
+
+    private void add()
+    {
+        result = input1 + input2;
+    }
+    private void sub()
+    {
+        result = input1 - input2;
+    }
+    private void multiply()
+    {
+        result = input1 * input2;
+    }
+    private void divide()
+    {
+        result = input1 / input2;
+    }
+
+}

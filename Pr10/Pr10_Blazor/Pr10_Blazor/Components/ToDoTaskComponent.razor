@@ -1,0 +1,32 @@
+﻿@rendermode InteractiveServer
+
+@* <h3>ToDoTaskComponent</h3> *@
+
+<div class="container">
+    <input class="col" type="checkbox" @bind-value="@taskItem.Done" @bind-value:after="onTaskDone" />
+    @if (!taskItem.Done)
+    {
+        <p class="input-group-text text-black d-inline-block col ms-1">@taskItem.Title</p>
+    }
+    else
+    {
+        <p class="input-group-text bg-light d-inline-block col ms-1 mb-1"><del>@taskItem.Title</del></p>
+        <p class="text-black row mt-n1 mb-n1">Completed af @DateTime.Now</p>
+            
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    [Required]
+    public TaskItem taskItem { get; set; } = new();
+    private void onTaskDone()
+    {
+        if (taskItem.Done)
+            taskItem.Completed = DateTime.Now;
+    }
+
+
+}

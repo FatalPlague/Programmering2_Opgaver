@@ -1,0 +1,6 @@
+@HittegodskontorMinimalAPI_HostAddress = http://localhost:5208
+
+GET {{HittegodskontorMinimalAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

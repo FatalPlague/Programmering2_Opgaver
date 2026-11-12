@@ -1,0 +1,19 @@
+﻿@rendermode InteractiveServer
+
+<h3>Counter</h3>
+
+<p>Current count: @count</p>
+<button @onclick="IncrementCounter" class="btn btn-primary">Click me</button>
+
+@code {
+    [Parameter]
+    public int IncrementCount { get; set; }
+
+        private int count = 0;
+
+    private void IncrementCounter()
+    {
+        count += IncrementCount;
+    }
+
+}

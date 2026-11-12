@@ -1,0 +1,43 @@
+﻿@page "/todo"
+@rendermode InteractiveServer
+
+<h3>ToDoList</h3>
+
+<div class="container">
+    <input class="input-group-text d-inline" type="text" @bind="newTitle" />
+    <button class="btn btn-primary d-inline ms-1" @onclick="addTask">Add task</button>
+</div>
+
+<div>
+@foreach (TaskItem task in toDoList)
+{
+    <ToDoTaskComponent taskItem="task"/>
+}
+</div>
+
+
+
+@code {
+
+    private string newTitle = "";
+    private List<TaskItem> toDoList = new List<TaskItem>();
+
+    private void addTask()
+    {
+        if(newTitle != "")
+        {
+            toDoList.Add(new TaskItem
+            {
+                Title = newTitle
+            });
+            newTitle = "";
+        }
+        
+    }
+
+
+    
+
+
+
+}

@@ -1,0 +1,18 @@
+﻿@rendermode InteractiveServer
+
+<h3>TemperatureCalculator</h3>
+
+<label class="text-primary">Celcius: </label>
+<input class="text-bg-primary" type="number" @bind="celciusInput" @bind:after="Calculate"/>
+<p class="text-primary" >Fahrenheit: @fahrenheitOutput</p>
+
+@code {
+
+    private double celciusInput = 0;
+    private double fahrenheitOutput = 0;
+
+    private void Calculate()
+    {
+        fahrenheitOutput = celciusInput * 9 / 5 + 32;
+    }
+}

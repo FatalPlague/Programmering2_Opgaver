@@ -1,0 +1,36 @@
+﻿@page "/MathTable/{Multiplier:int}"
+@rendermode InteractiveServer
+
+<h3>MultiplyingTable</h3>
+
+<table>
+    <tr hidden="hidden">
+        <th>multiplier</th>
+        <th>operator</th>
+        <th>to be multiplied</th>
+        <th>equal</th>
+        <th>result</th>
+    </tr>
+    @for (int i = 1; i<11; i++)
+    {
+        <tr>
+            <td>@Multiplier</td>
+            <td>x</td>
+            <td>@i</td>
+            <td>=</td>
+            @{
+                int result = Multiplier * i;
+            }
+            <td>@result</td>
+        </tr>
+    }
+    
+    
+
+</table>
+
+@code {
+    [Parameter]
+    public int Multiplier { get; set; }
+
+}
