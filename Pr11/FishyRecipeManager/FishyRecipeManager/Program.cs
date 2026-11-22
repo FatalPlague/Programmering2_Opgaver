@@ -1,5 +1,6 @@
 using FishyRecipeManager.Components;
 using FishyRecipeManager.Data;
+using FishyRecipeManager.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace FishyRecipeManager
@@ -15,8 +16,12 @@ namespace FishyRecipeManager
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
             });
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 
-            builder.Services.AddRazorComponents();
+
+            builder.Services.AddRazorComponents()
+                .AddInteractiveServerComponents();
 
             var app = builder.Build();
 
@@ -34,7 +39,8 @@ namespace FishyRecipeManager
             app.UseAntiforgery();
 
             app.MapStaticAssets();
-            app.MapRazorComponents<App>();
+            app.MapRazorComponents<App>()
+                .AddInteractiveServerRenderMode();
 
             app.Run();
         }

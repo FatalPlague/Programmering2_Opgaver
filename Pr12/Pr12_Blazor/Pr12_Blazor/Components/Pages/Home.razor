@@ -1,0 +1,41 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Pr12_Blazor.Components.Controls
+
+@* <style>
+    body{
+        background : @Color;
+    }
+</style> *@
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<TextCounter OnDesciptionChanged="OnDescriptionChangedHandler"></TextCounter>
+<p>Description has a length of @DescriptionLength characters</p>
+
+<ColorPicker OnColorChanged="OnColorChangedHandler"></ColorPicker>
+@* <h3 style="background: @Color;">Den valgte farve er: @Color</h3> *@
+
+<CascadingValue Value="Color">
+    <ChildA></ChildA>
+</CascadingValue>
+
+
+@code{
+    public int DescriptionLength { get; set; }
+    public string Color { get; set; } = "";
+
+    public void OnDescriptionChangedHandler(int descriptionLength)
+    {
+        DescriptionLength = descriptionLength;
+    }
+
+    public void OnColorChangedHandler(string color)
+    {
+        Color = color;
+    }
+}

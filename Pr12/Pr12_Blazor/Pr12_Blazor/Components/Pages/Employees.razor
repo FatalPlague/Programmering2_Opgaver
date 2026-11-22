@@ -1,0 +1,37 @@
+﻿@page "/employees"
+@rendermode InteractiveServer
+
+<h3>Employees</h3>
+<div class="d-flex justify-content-center mb-5 mt-3">
+    <SearchEmployee OnSearch="OnSearchHandler"></SearchEmployee>
+</div>
+
+<DepartmentList OnViewEmployees="OnViewEmployeesHandler" Departments="departments" HighlightedDepartment="@highlightedDepartment"></DepartmentList>
+<EmployeeList Employees="employees"></EmployeeList>
+
+
+@code {
+    private List<string> departments;
+    private List<Employee> employees;
+    private string highlightedDepartment;
+
+    protected override void OnInitialized()
+    {
+        departments = DepartmentRepository.GetAll();
+        employees = EmployeeRepository.GetByDepartment("HR");
+        highlightedDepartment = "HR";
+        base.OnInitialized();
+    }
+
+    public void OnViewEmployeesHandler(string department)
+    {
+        employees = EmployeeRepository.GetByDepartment(department);
+        highlightedDepartment = department;
+    }
+
+    public void OnSearchHandler(string searchText)
+    {
+        highlightedDepartment = "";
+        employees = EmployeeRepository.GetBySearchFilter(searchText);
+    }
+}

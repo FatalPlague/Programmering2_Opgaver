@@ -1,0 +1,21 @@
+﻿<h3>DescriptionComponent</h3>
+
+<textarea @bind="Description" @bind:event="oninput"></textarea>
+
+@code {
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnDesciptionChanged { get; set; }
+
+    private string _destription;
+    public string Description {
+        get => _destription;
+        set
+        {
+            _destription = value;
+            OnDesciptionChanged.InvokeAsync(Description.Length);
+        }
+    }
+
+
+
+}

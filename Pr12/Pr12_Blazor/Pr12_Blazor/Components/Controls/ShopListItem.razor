@@ -1,0 +1,75 @@
+﻿<div class="col mb-3 mb-sm-0">
+    <div style="width: 250px" class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@Item.Name</h5>
+            <p class="card-text">Price: @Item.Price</p>
+            <p class="card-text">Level: @Item.Level</p>
+            
+            @if(Item.Owned && !itemBought)
+            {
+                itemBought = true;
+                OnEquip.InvokeAsync(Item);
+            }
+
+            @if (!Item.Owned)
+            {
+                @if (Balance >= Item.Price)
+                {
+                    <a style="width: 100%" @onclick="() => OnBuy.InvokeAsync(Item)" class="btn btn-primary">Buy</a>
+                }
+                else
+                {
+                    <a style="width: 100%" class="btn btn-primary disabled">Buy</a>
+                }
+
+            }
+            else
+            {
+                if (!itemBought)
+                {
+                    itemBought = true;
+                    OnEquip.InvokeAsync(Item);
+                }
+
+                if (Item.Current)
+                {
+                    <a style="width: 100%;" class="btn btn-success">Equipped</a>
+                }
+                else
+                {
+                    <a style="width: 100%" @onclick="() => OnEquip.InvokeAsync(Item)" class="btn btn-secondary">Equip</a>
+                }
+
+                <a style="width: 100%;" @onclick="Upgrade" class="btn btn-warning">Upgrade</a>
+            }
+
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public ShopItem Item { get; set; }
+
+    [Parameter]
+    public EventCallback<ShopItem> OnBuy { get; set; }
+
+    [Parameter]
+    public EventCallback<ShopItem> OnEquip { get; set; }
+
+    [Parameter]
+    public EventCallback<ShopItem> OnUpgrade { get; set; }
+
+    [CascadingParameter]
+    public decimal Balance { get; set; }
+
+    public void Upgrade()
+    {
+        Item.Level++;
+        OnUpgrade.InvokeAsync(Item);
+    }
+
+    private bool itemBought;
+}

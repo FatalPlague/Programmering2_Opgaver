@@ -1,0 +1,11 @@
+﻿<div class="d-flex flex-wrap gap-3">
+    @foreach (Employee employee in Employees)
+    {
+        <EmployeeCard Employee="employee"></EmployeeCard>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<Employee> Employees { get; set; }
+}

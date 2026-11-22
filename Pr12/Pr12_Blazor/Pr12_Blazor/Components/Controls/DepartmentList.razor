@@ -1,0 +1,25 @@
+﻿<div class="d-flex flex-wrap mb-3 gap-2">
+    @foreach (string department in Departments)
+    {
+        <DepartmentCard DepartmentName="@department" Highlighted="HighlightedDepartment == department" OnViewEmployees="OnViewEmployeesHandler"></DepartmentCard>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public List<string> Departments { get; set; }
+
+    [Parameter]
+    public string HighlightedDepartment { 
+        get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnViewEmployees { get; set; }
+
+    public void OnViewEmployeesHandler(string department)
+    {
+        HighlightedDepartment = department;
+        OnViewEmployees.InvokeAsync(department);
+    }
+}

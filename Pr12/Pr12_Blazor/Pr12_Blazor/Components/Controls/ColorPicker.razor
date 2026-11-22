@@ -1,0 +1,24 @@
+﻿<h3>ColorPicker</h3>
+
+<input type="color" class="form-control form-control-color" id="exampleColorInput" @bind="Color" @bind:event="oninput" title="Choose your color">
+
+<p>@Color</p>
+
+@code {
+    [Parameter, EditorRequired]
+    public EventCallback<string> OnColorChanged { get; set; }
+    
+    private string _color = "#aaaaaa";
+    public string Color
+    {
+        get => _color;
+        set
+        {
+            _color = value;
+            OnColorChanged.InvokeAsync(Color);
+        }
+    }
+    
+
+    
+}

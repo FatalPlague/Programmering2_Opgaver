@@ -1,0 +1,9 @@
+﻿<h3>ChildB</h3>
+
+<h3 style="color: @Color; background-color: white;">farven er: @Color</h3>
+
+<ChildC></ChildC>
+@code {
+    [CascadingParameter]
+    public string Color { get; set; }
+}

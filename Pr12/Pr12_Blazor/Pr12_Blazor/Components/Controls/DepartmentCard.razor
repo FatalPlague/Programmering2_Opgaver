@@ -1,0 +1,17 @@
+﻿
+<div class="card border-2" style="width: 18rem; border-color: @(Highlighted ? "blue" : "lightgray");">
+    <div class="card-body">
+        <h5 class="card-title">@DepartmentName</h5>
+        <a class="btn btn-primary" @onclick="() => OnViewEmployees.InvokeAsync(DepartmentName)">View Employees</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string DepartmentName { get; set; }
+    [Parameter]
+    public bool Highlighted { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnViewEmployees { get; set; }
+}

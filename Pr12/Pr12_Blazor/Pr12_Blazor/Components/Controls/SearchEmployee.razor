@@ -1,0 +1,8 @@
+﻿@* <input width="400" type="text" @bind-value="@" @bind-value:event="" placeholder="Search for employees" /> *@
+<input width="400" type="text" placeholder="Search for employees" @bind="searchText" @bind:event="oninput" @bind:after="() => OnSearch.InvokeAsync(searchText)" />
+@code {
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+
+    private string searchText;
+}

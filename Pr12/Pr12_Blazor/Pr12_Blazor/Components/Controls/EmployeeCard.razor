@@ -1,0 +1,12 @@
+﻿<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">@Employee.FullName</h5>
+        <p class="card-text text-secondary">@Employee.Department</p>
+        <p class="card-text">@Employee.Email</p>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Employee Employee { get; set; }
+}

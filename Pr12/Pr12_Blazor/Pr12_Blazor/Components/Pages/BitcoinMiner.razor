@@ -1,0 +1,37 @@
+﻿@page "/miner"
+@using Pr12_Blazor.Components.Controls
+@rendermode InteractiveServer
+<h3>BitcoinMiner</h3>
+<section>
+    <h3 class="form-label">Balance</h3>
+    <h4>Du har: @Balance.ToString("F5") BTC</h4>
+    <button @onclick="MineBTC">Mine BTC</button>
+    <div>
+        <h3>Shop</h3>
+        <CascadingValue Value="Balance">
+            <ShopList OnItemBuy="OnItemBuyHandler" OnMineFactorChanged="OnMineFactorChangedHandler"></ShopList>
+        </CascadingValue>
+        
+    </div>
+</section>
+
+@code {
+    private static decimal Balance;
+    private decimal factor;
+
+
+
+    private void MineBTC()
+    {
+        Balance += factor;
+    }
+    public void OnItemBuyHandler(ShopItem item)
+    {
+        Balance -= item.Price;
+        item.Owned = true;
+    }
+    public void OnMineFactorChangedHandler(decimal newFactor)
+    {
+        factor = newFactor;
+    }
+}

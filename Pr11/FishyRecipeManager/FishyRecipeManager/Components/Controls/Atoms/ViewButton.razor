@@ -1,0 +1,13 @@
+﻿@inject IRecipeRepository recipeRepo
+
+<h3>ViewButton</h3>
+
+<a href="@($"/recipes/{RecipeId}")">
+    <img src="svgs/view-svgrepo-com.svg" alt="view recipe" width="15" height="15" role="img" />
+</a>
+
+@code {
+[Parameter]
+public int RecipeId { get; set; }
+
+}

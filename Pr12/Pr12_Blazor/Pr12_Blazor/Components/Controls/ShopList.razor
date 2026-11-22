@@ -1,0 +1,64 @@
+﻿<div class="row">
+    @foreach (ShopItem item in shopItems)
+    {
+        <ShopListItem Item="item" OnEquip="OnEquipHandler" OnBuy="OnItemBuy" OnUpgrade="FactorChanged"></ShopListItem>
+        
+    }
+    
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<ShopItem> OnItemBuy { get; set; }
+
+    [Parameter]
+    public EventCallback<decimal> OnMineFactorChanged { get; set; }
+
+    public void OnEquipHandler(ShopItem item)
+    {
+        shopItems.Select(x => x.Name == item.Name ? x.Current = true : x.Current = false).ToList();
+
+        FactorChanged(item);
+    }
+
+    private void FactorChanged(ShopItem item)
+    {
+        OnMineFactorChanged.InvokeAsync(item.Multiplier * item.Level);
+    }
+
+    List<ShopItem> shopItems = new List<ShopItem>
+    {
+        new ShopItem
+        {
+            Name = "Hands",
+            Price = 0m,
+            Owned = true,
+            Current = true,
+            Multiplier = 0.00001m
+        },
+        new ShopItem
+        {
+            Name = "Wooden Pickaxe",
+            Price = 0.0001m,
+            Multiplier = 0.00005m
+        },
+        new ShopItem
+        {
+            Name = "Stone Pickaxe",
+            Price = 0.01m,
+            Multiplier = 0.001m
+        },
+        new ShopItem
+        {
+            Name = "Iron Pickaxe",
+            Price = 0.1m,
+            Multiplier = 0.01m
+        },
+        new ShopItem
+        {
+            Name = "Diamond Pickaxe",
+            Price = 10m,
+            Multiplier = 1m
+        },
+    };
+}

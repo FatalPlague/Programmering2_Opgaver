@@ -1,0 +1,104 @@
+﻿@page "/hej"
+@rendermode InteractiveServer
+@inject IRecipeRepository recipeRepository
+@inject ICategoryRepository categoryRepository
+@inject NavigationManager navigationManager
+
+<h3>CreateNewRecipe</h3>
+<EditForm Model="recipe" FormName="CreateRecipe" OnValidSubmit="saveRecipe">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <ValidationSummary></ValidationSummary>
+    <div class="row">
+        <!-- Venstre kolonne-->
+        <div class="col-6">
+            <div class="mb-3">
+                <label for="name" class="form-label">Recipe Name</label>
+                <InputText id="name" class="form-control" @bind-Value="recipe.Name" placeholder="Enter recipe name" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label"> Category</label>
+
+                @if (categories is not null && recipe is not null)
+                {
+                    <InputSelect class="form-select" @bind-Value="recipe.CategoryId">
+                        <option value="">-- Choose category --</option>
+                            @foreach (Category category in categories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                    </InputSelect>
+                }
+                
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <label for="prep" class="form-label fw-medium small">Prep Time</label>
+                    <InputText id="prep" class="form-control" @bind-Value="recipe.PrepTime" placeholder="e.g., 15 min" />
+                </div>
+                <div class="col-6">
+                    <label for="servings" class="form-label fw-medium small">Servings</label>
+                    <InputNumber id="servings" class="form-control" @bind-Value="recipe.Servings" placeholder="e.g., 4" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Recipe image</label>
+                <InputFile class="form-control" onchange="fileUpdload" ></InputFile>
+
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Højre kolonne -->
+            <div class="mb-3">
+                <label for="desc" class="form-label fw-medium small">Description</label>
+                <InputTextArea id="desc" class="form-control" rows="4" @bind-Value="recipe.Description"
+                               placeholder="Brief description of the recipe" />
+            </div>
+
+            <div class="mb-3">
+                <label for="ingredients" class="form-label fw-medium small">Ingredients</label>
+                <InputTextArea id="ingredients" class="form-control" rows="5" @bind-Value="recipe.Ingredients"
+                               placeholder="List ingredients (one per line)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="instructions" class="form-label fw-medium small">Instructions</label>
+                <InputTextArea id="instructions" class="form-control" rows="6" @bind-Value="recipe.Instructions"
+                               placeholder="Step-by-step instructions" />
+            </div>
+        </div>
+
+
+    </div>
+        
+    <button type="submit">Save recipe</button>
+</EditForm>
+
+
+@code {
+    [SupplyParameterFromForm]
+    private Recipe recipe { get; set; } = new Recipe();
+
+    List<Category> categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Her bruger du det injectede repository via navnet fra @inject
+        categories = await categoryRepository.GetAllAsync();
+    }
+    void saveRecipe()
+    {
+
+        recipeRepository.CreateAsync(recipe);
+
+        navigationManager.NavigateTo("/");
+    }
+
+    private async Task fileUpdload(InputFileChangeEventArgs e)
+    {
+        MemoryStream ms = new MemoryStream();
+        await e.File.OpenReadStream().CopyToAsync(ms);
+        recipe.Image = ms.ToArray();
+        //do something with bytes
+    }
+}
